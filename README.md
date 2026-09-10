@@ -20,7 +20,7 @@
 
 ## 로컬 실행
 
-Python 3.11 이상:
+Python 3.12 이상 (고정 의존성 기준):
 
 ```bash
 python3 -m venv .venv
