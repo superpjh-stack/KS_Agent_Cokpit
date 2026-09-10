@@ -104,3 +104,28 @@ def test_procedures_search_even_without_model_tool_call(tmp_path):
     answer = ManufacturingAgent(NS(responses=NS(create=create)), factory_tools=registry).ask('출하 승인 절차는?')
     assert answer.searched_documents and answer.evidence
     assert 'KWP-KB-008' in requests[0]['input']
+
+
+def test_repeated_questions_and_reset_keep_chat_renderable(monkeypatch, tmp_path):
+    from kwangsung_agent.service import AgentAnswer
+    monkeypatch.setenv('SQLITE_PATH', str(tmp_path / 'chat-ui.db'))
+    monkeypatch.setenv('DATABASE_URL', '')
+    monkeypatch.setenv('POSTGRES_URL', '')
+    monkeypatch.setenv('OPENAI_API_KEY', 'test-no-network')
+    calls = []
+    def answer(self, question, *args, **kwargs):
+        calls.append(question)
+        return AgentAnswer('생산관리가 확인합니다.\n근거: KWP-KB-001', ['공정추적.md'],
+                           [{'filename': '공정추적.md', 'text': '작업지시의 소재 LOT를 확인합니다.'}],
+                           'test-response', ['search_knowledge'], True, 0, True)
+    monkeypatch.setattr(ManufacturingAgent, 'ask', answer)
+    app = AppTest.from_file(str(Path(__file__).resolve().parents[1] / 'app.py'), default_timeout=20).run()
+    for _ in range(2):
+        app.button(key='suggestion_지식베이스_0').click().run()
+        assert not app.exception
+    assert len(calls) == 2
+    assert len(app.session_state['messages']) == 5
+    next(b for b in app.button if b.label == '새 대화').click().run()
+    assert len(app.session_state['messages']) == 1
+    assert app.session_state['previous_response_id'] is None
+    assert not app.exception

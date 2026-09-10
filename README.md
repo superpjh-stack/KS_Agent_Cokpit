@@ -26,6 +26,7 @@ Python 3.12 이상 (고정 의존성 기준):
 python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.lock
+python scripts/prepare_frontend.py
 cp .env.example .env
 streamlit run app.py --server.port 8504
 ```
@@ -81,4 +82,6 @@ PostgreSQL 초기화·벡터 검색·반복 이전 테스트는 별도 테스트
 
 자동 테스트 12개 통과, PostgreSQL 테스트 1개는 관리자 URL 미설정으로 건너뛰었습니다. 데스크톱 및 모바일 390px 화면을 확인했으며 페이지 가로 넘침과 브라우저 오류가 없었습니다. Docker CLI가 없어 Compose 및 실제 컨테이너 구동은 검증하지 못했습니다. 실제 AI·음성 호출은 API 키 없이 검증하지 않았습니다.
 
-브라우저 자동 번역이 켜져 있으면 이미 한국어인 용어를 잘못 바꿀 수 있습니다. 화면 문구가 어색하면 원문 보기로 확인하세요.
+한국어 앱의 초기 HTML에 `lang="ko"`, `translate="no"`, Google `notranslate` 메타 태그를 적용합니다. 자동 번역이 React의 텍스트 노드를 바꿔 대화 갱신 시 `removeChild` 오류를 일으키는 것을 방지합니다. Docker 빌드에 자동 적용하며 로컬은 위 준비 명령을 실행합니다. 수정 전부터 열려 있던 탭은 새로고침해야 적용됩니다.
+
+관련 근거: [React 오류 보고](https://github.com/facebook/react/issues/11538), [Chromium 번역 제어](https://chromium.googlesource.com/website/+/HEAD/site/developers/design-documents/translate/index.md).

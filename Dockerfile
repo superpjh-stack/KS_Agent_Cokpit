@@ -18,6 +18,7 @@ COPY .streamlit ./.streamlit
 COPY kwangsung_agent ./kwangsung_agent
 COPY sample_docs ./sample_docs
 COPY scripts ./scripts
+RUN python scripts/prepare_frontend.py
 COPY data/kwangsung_demo.db ./data/kwangsung_demo.db
 
 EXPOSE 8501
