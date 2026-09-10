@@ -1,0 +1,36 @@
+name: kwangsung-cockpit-v1
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: kwp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kwp_cockpit
+      POSTGRES_USER: kwp
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?POSTGRES_PASSWORD is required}
+    volumes:
+      - kwp_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kwp -d kwp_cockpit"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kwp-agent-cockpit
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://kwp:${POSTGRES_PASSWORD}@postgres:5432/kwp_cockpit
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-}
+    ports:
+      - "8504:8501"
+
+volumes:
+  kwp_postgres_data:

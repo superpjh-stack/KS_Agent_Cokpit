@@ -1,0 +1,13 @@
+.env
+.DS_Store
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+data/postgres/
+data/postgres.log
+.venv-v2/
+node_modules/
+v2/web/dist/
+*.tsbuildinfo
+data/kwangsung_v2_demo.db

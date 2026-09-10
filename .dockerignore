@@ -1,0 +1,12 @@
+.env
+.venv
+__pycache__
+.pytest_cache
+.git
+data/postgres
+data/postgres.log
+*.pyc
+.venv-v2
+**/node_modules
+v2/web/dist
+*.tsbuildinfo

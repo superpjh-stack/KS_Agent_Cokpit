@@ -1,0 +1,79 @@
+[
+  {
+    "rule_id": "KWP-R-002",
+    "name": "수입검사 검토",
+    "source_table": "incoming_inspections",
+    "condition": "result = 보류 또는 certificate_attached = 0",
+    "owner": "품질",
+    "action": "소재 규격·두께·경도와 소재성적서를 함께 확인합니다. 성적서가 없거나 검사 보류이면 담당자가 적합성을 확인하기 전 투입 여부를 결정하지 않습니다.",
+    "source_document": "KWP-KB-002",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  },
+  {
+    "rule_id": "KWP-R-003",
+    "name": "프레스점검 검토",
+    "source_table": "press_readings",
+    "condition": "status = 경고 또는 주의",
+    "owner": "보전",
+    "action": "진동·전류·온도·압력의 측정 시각과 금형을 확인합니다. 기준 초과 여부는 승인된 설비별 한계와 비교해야 하며 이 샘플은 수치 한계를 정하지 않습니다. 이상음이나 이상 진동은 현장 보전책임자에게 전달합니다.",
+    "source_document": "KWP-KB-003",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  },
+  {
+    "rule_id": "KWP-R-004",
+    "name": "금형수명 검토",
+    "source_table": "dies",
+    "condition": "condition = 교체 검토",
+    "owner": "보전",
+    "action": "정격 스트로크와 누적 사용량의 차이는 명목 잔여량입니다. 모델 예측 잔여량과 구분합니다. 교체 검토 금형은 정렬·가이드·마모 상태를 담당자가 점검하고 교체를 승인합니다.",
+    "source_document": "KWP-KB-004",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  },
+  {
+    "rule_id": "KWP-R-005",
+    "name": "예지보전 검토",
+    "source_table": "maintenance_predictions",
+    "condition": "risk_level = 긴급 또는 높음",
+    "owner": "보전",
+    "action": "위험점수와 잔여 스트로크는 미검증 저장 예측입니다. 제품 불량 확률로 해석하지 않습니다. 같은 프레스·금형 조합의 측정과 정비 이력을 비교하고 가동 전 담당자 검토를 요청합니다.",
+    "source_document": "KWP-KB-005",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  },
+  {
+    "rule_id": "KWP-R-006",
+    "name": "전착검사 검토",
+    "source_table": "process_trace",
+    "condition": "result = 보류 또는 note에 외관보류",
+    "owner": "품질",
+    "action": "전착 수량과 외관 보류 기록을 확인합니다. 보류품은 합격품과 구분하고 재검 및 처분 이력을 담당자가 기록합니다. 다음 공정에 전달한 수량과 일치하는지 확인합니다.",
+    "source_document": "KWP-KB-006",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  },
+  {
+    "rule_id": "KWP-R-008",
+    "name": "출하승인 검토",
+    "source_table": "shipments",
+    "condition": "status != 출하완료 또는 quality_approval != 승인",
+    "owner": "품질·물류",
+    "action": "치수·외관·마킹 최종검사 및 품질 승인 기록을 확인합니다. 조건부합격은 출하 승인 완료를 뜻하지 않습니다. 공정중간검사는 최종검사를 대신하지 않습니다.",
+    "source_document": "KWP-KB-008",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  },
+  {
+    "rule_id": "KWP-R-010",
+    "name": "데이터검증 검토",
+    "source_table": "maintenance_predictions",
+    "condition": "선택 설비·금형의 예측 없음",
+    "owner": "생산·품질",
+    "action": "2026년 9월 가상 샘플로 실제 실적과 구분합니다. 측정·검사·예측이 누락되면 미확인으로 표시합니다. 다른 금형의 예측을 선택 작업의 위험으로 사용하지 않습니다.",
+    "source_document": "KWP-KB-010",
+    "revision": "샘플 R0",
+    "status": "미승인 샘플"
+  }
+]
