@@ -1,6 +1,6 @@
 # 광성정밀 제조 AI Agent Cockpit · V1
 
-임진강김치 V1 화면과 `agent-cokpit-maker`·`skill-1-streamlit` 스킬을 광성정밀의 제조 공정에 적용한 **Streamlit 앱**입니다.
+경동글로벌텍 제조 AI Cockpit을 기준 구현으로 삼아 `agent-cokpit-maker`·`skill-1-streamlit` 스킬을 광성정밀의 제조 공정에 적용한 **Streamlit 앱**입니다.
 
 입고·수입검사 → 프레스 → 전착 → 마킹 → 출하검사를 작업지시·소재 LOT로 연결하고, 설비·금형 예지보전과 현장 지식검색을 지원합니다.
 

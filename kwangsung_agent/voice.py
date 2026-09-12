@@ -14,7 +14,10 @@ class VoiceService:
         response = self.client.audio.transcriptions.create(
             model="gpt-4o-mini-transcribe", file=("question.wav", recording, "audio/wav"),
             language="ko", response_format="json",
-            prompt="가공품 제조 업무 질문. 광성정밀, 배추, 율무, 프레스, 금형, 염도, 산도, 수입검사, LOT, 출하.",
+            prompt=(
+                "금속 가공품 제조 업무 질문. 광성정밀, 프레스, 금형, 전착, 마킹, "
+                "수입검사, 출하검사, 소재 LOT, 작업지시, 예지보전."
+            ),
         )
         text = response.text.strip()
         if not text:
