@@ -30,7 +30,8 @@ registry = KwangsungToolRegistry(repository)
 for key, default in {
     "messages": [WELCOME_MESSAGE.copy()], "vector_store_id": repository.setting("vector_store_id"), "uploaded_names": [],
     "previous_response_id": None, "pending_question": None, "question_group": "지식베이스",
-    "voice_draft": "", "voice_digest": None,
+    "voice_draft": "", "voice_digest": None, "mobile_voice_digest": None,
+    "mobile_voice_reply_pending": False,
     "agent_settings": {"api_key": SERVER_API_KEY,
                        "model": (os.getenv("OPENAI_MODEL") or DEFAULT_MODEL), "max_results": 6},
 }.items():
@@ -163,6 +164,8 @@ with left_col:
             st.session_state.pending_question = None
             st.session_state.voice_draft = ""
             st.session_state.voice_digest = None
+            st.session_state.mobile_voice_digest = None
+            st.session_state.mobile_voice_reply_pending = False
             st.rerun()
         history = user_question_history(st.session_state.messages)
         if not history:
@@ -313,8 +316,12 @@ with chat_col:
                         except Exception:
                             st.error("음성을 만들지 못했습니다. API 연결·사용 한도를 확인하고 다시 눌러주세요.")
                     if message.get("audio"):
-                        st.caption("AI가 생성한 음성입니다. 재생 버튼을 누르면 들을 수 있습니다.")
-                        st.audio(message["audio"], format="audio/mpeg")
+                        autoplay_audio = bool(message.pop("autoplay_audio", False))
+                        if autoplay_audio:
+                            st.caption("답변을 자동으로 재생합니다. 필요하면 재생 버튼으로 다시 들으세요.")
+                        else:
+                            st.caption("AI가 생성한 음성입니다. 재생 버튼을 누르면 들을 수 있습니다.")
+                        st.audio(message["audio"], format="audio/mpeg", autoplay=autoplay_audio)
                 if message.get("data_tools") or message.get("evidence") or message.get("sources") or "searched_documents" in message:
                     with st.expander("근거 자세히 보기"):
                         grounds = []
@@ -339,6 +346,28 @@ with chat_col:
                                 score_text = f" · 유사도 {score:.3f}" if isinstance(score, (int, float)) else ""
                                 st.markdown(f"**{evidence['filename']}**{score_text}")
                                 st.write(evidence.get("text") or "검색 텍스트 미제공")
+    with st.container(key="mobile_voice_bar"):
+        mobile_recording = st.audio_input(
+            "음성으로 바로 질문",
+            key="mobile_voice_recording",
+            help="마이크를 누르고 질문하세요. 녹음을 마치면 질문 전송과 답변 음성 재생이 자동으로 이어집니다.",
+            disabled=voice_service is None,
+            label_visibility="collapsed",
+            width=220,
+        )
+        mobile_digest = hashlib.sha256(mobile_recording.getvalue()).hexdigest() if mobile_recording else None
+        if mobile_recording and mobile_digest != st.session_state.mobile_voice_digest:
+            st.session_state.mobile_voice_digest = mobile_digest
+            try:
+                with st.spinner("질문을 듣고 있습니다…"):
+                    mobile_question = voice_service.transcribe(mobile_recording.getvalue())
+                st.session_state.pending_question = mobile_question
+                st.session_state.mobile_voice_reply_pending = True
+                st.toast(f"음성 질문: {mobile_question}", icon="🎙️")
+            except ValueError as exc:
+                st.toast(str(exc), icon="⚠️")
+            except Exception:
+                st.toast("음성 인식에 실패했습니다. API 연결·사용 한도를 확인해 주세요.", icon="⚠️")
     with st.container(border=True, key="voice_panel"):
         st.markdown("##### 음성으로 질문하기")
         st.caption("녹음 → 글자로 변환 → 확인 후 질문 보내기")
@@ -372,14 +401,23 @@ if question:
         st.toast("질문을 실행하려면 API 키를 먼저 설정하세요.", icon="🔑")
     else:
         st.session_state.messages.append({"role": "user", "content": question, "created_at": timestamp()})
+        auto_voice_reply = bool(st.session_state.pop("mobile_voice_reply_pending", False))
         try:
             answer = agent.ask(question, st.session_state.vector_store_id, st.session_state.previous_response_id, max_results)
-            st.session_state.messages.append({
+            assistant_message = {
                 "role": "assistant", "content": answer.text, "sources": answer.sources,
                 "evidence": answer.evidence, "data_tools": answer.data_tools, "created_at": timestamp(),
                 "searched_documents": answer.searched_documents,
                 "knowledge_base_connected": answer.knowledge_base_connected,
-            })
+            }
+            if auto_voice_reply:
+                try:
+                    with st.spinner("답변을 음성으로 만들고 있습니다…"):
+                        assistant_message["audio"] = voice_service.speak(answer.text)
+                    assistant_message["autoplay_audio"] = True
+                except Exception:
+                    st.toast("답변은 완료됐지만 음성 재생을 준비하지 못했습니다.", icon="⚠️")
+            st.session_state.messages.append(assistant_message)
             st.session_state.previous_response_id = answer.response_id
         except Exception as exc:
             st.session_state.messages.append({"role": "assistant", "content": "답변 생성에 실패했습니다. API 연결·모델 설정·사용 한도를 확인해 주세요.", "created_at": timestamp()})

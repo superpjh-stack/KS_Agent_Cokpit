@@ -55,3 +55,19 @@ def test_voice_prompt_uses_only_kwangsung_manufacturing_terms():
     prompt = transcriptions.request['prompt']
     assert all(term in prompt for term in ('광성정밀', '프레스', '금형', '전착', '마킹'))
     assert all(term not in prompt for term in ('배추', '율무', '염도', '산도'))
+
+
+def test_mobile_voice_is_quick_send_and_one_time_autoplay():
+    root = Path(__file__).resolve().parents[1]
+    app_source = (root / 'app.py').read_text()
+    css = (root / 'assets' / 'cockpit.css').read_text()
+
+    assert 'key="mobile_voice_recording"' in app_source
+    assert 'mobile_voice_reply_pending' in app_source
+    assert 'assistant_message["autoplay_audio"] = True' in app_source
+    assert 'message.pop("autoplay_audio", False)' in app_source
+    assert 'autoplay=autoplay_audio' in app_source
+    assert '.st-key-mobile_voice_bar { display:none; }' in css
+    assert '@media (max-width:640px)' in css
+    assert 'bottom:calc(74px + env(safe-area-inset-bottom))' in css
+    assert '[data-testid="stChatInput"] { position:fixed;' in css

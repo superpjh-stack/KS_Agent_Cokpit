@@ -136,6 +136,7 @@ div.stButton > button[kind="primary"]:hover { background:#a13d18; color:#fff; }
 }
 
 .st-key-voice_panel { background:#fff; border-radius:4px !important; }
+.st-key-mobile_voice_bar { display:none; }
 
 /* Chat console: a darker, high-contrast focal surface inside the factory workspace. */
 @media (min-width:641px) {
@@ -161,6 +162,12 @@ div.stButton > button[kind="primary"]:hover { background:#a13d18; color:#fff; }
  .st-key-workspace > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(1),
  .st-key-workspace > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(3),
  .st-key-voice_panel { display:none !important; }
+ .st-key-mobile_voice_bar { display:block !important; position:fixed; right:14px; bottom:calc(74px + env(safe-area-inset-bottom)); z-index:30; width:220px; pointer-events:none; }
+ .st-key-mobile_voice_bar > [data-testid="stVerticalBlock"] { align-items:flex-end; gap:0; }
+ .st-key-mobile_voice_bar [data-testid="stAudioInput"] { width:auto !important; max-width:220px; margin-left:auto; pointer-events:auto; }
+ .st-key-mobile_voice_bar [data-testid="stAudioInput"] button { min-width:54px; min-height:54px; border:0; border-radius:999px; background:#bd4b20; color:#fff; box-shadow:0 8px 22px rgba(90,35,16,.28); }
+ .st-key-mobile_voice_bar [data-testid="stAudioInput"] button:hover { background:#a13d18; color:#fff; }
+ .st-key-mobile_voice_bar [data-testid="stAudioInput"] button:focus-visible { outline:3px solid #ffb16f; outline-offset:3px; }
  .st-key-workspace > [data-testid="stLayoutWrapper"] > [data-testid="stHorizontalBlock"] > [data-testid="stColumn"]:nth-child(2) { width:100% !important; flex-basis:100% !important; }
  .st-key-chat_panel { height:calc(100dvh - 112px) !important; min-height:420px; border:0 !important; border-radius:0 !important; background:#f5f7f7 !important; padding:12px 0 0 !important; }
  .st-key-chat_panel > [data-testid="stVerticalBlock"] { gap:.45rem; }
@@ -170,5 +177,5 @@ div.stButton > button[kind="primary"]:hover { background:#a13d18; color:#fff; }
  [data-testid="stChatMessage"] { border-radius:18px; padding:10px 12px; margin-bottom:9px; }
  [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarUser"]) { margin-left:12%; }
  [data-testid="stChatMessage"]:has([data-testid="stChatMessageAvatarAssistant"]) { margin-right:5%; }
- [data-testid="stChatInput"] { position:sticky; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:5; box-shadow:0 4px 18px rgba(34,43,48,.12); }
+ [data-testid="stChatInput"] { position:fixed; left:12px; right:12px; bottom:calc(8px + env(safe-area-inset-bottom)); z-index:5; width:auto; box-shadow:0 4px 18px rgba(34,43,48,.12); }
 }

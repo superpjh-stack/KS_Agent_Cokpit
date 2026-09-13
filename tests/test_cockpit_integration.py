@@ -68,6 +68,8 @@ def test_streamlit_render_and_controls(monkeypatch, tmp_path):
     assert not app.exception
     assert app.session_state['previous_response_id'] is None
     assert len(app.session_state['messages']) == 1
+    assert app.session_state['mobile_voice_digest'] is None
+    assert app.session_state['mobile_voice_reply_pending'] is False
     # Session settings can be reviewed without making network calls.
     next(t for t in app.text_input if t.label == '새 OpenAI API Key').set_value('fake-session-key')
     next(b for b in app.button if b.label == '설정 반영').click().run()
