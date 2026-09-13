@@ -69,5 +69,8 @@ def test_mobile_voice_is_quick_send_and_one_time_autoplay():
     assert 'autoplay=autoplay_audio' in app_source
     assert '.st-key-mobile_voice_bar { display:none; }' in css
     assert '@media (max-width:640px)' in css
-    assert 'bottom:calc(74px + env(safe-area-inset-bottom))' in css
+    assert 'bottom:calc(90px + env(safe-area-inset-bottom))' in css
+    assert 'left:12px; right:12px;' in css
+    assert 'width="stretch"' in app_source
+    assert 'st.rerun()' in app_source
     assert '[data-testid="stChatInput"] { position:fixed;' in css

@@ -347,13 +347,22 @@ with chat_col:
                                 st.markdown(f"**{evidence['filename']}**{score_text}")
                                 st.write(evidence.get("text") or "검색 텍스트 미제공")
     with st.container(key="mobile_voice_bar"):
+        mobile_voice_hint = (
+            "마이크를 누르고 말한 뒤 정지하면 자동으로 질문합니다."
+            if voice_service
+            else "음성 질문을 사용하려면 왼쪽 상단에서 API 키를 먼저 설정하세요."
+        )
+        st.markdown(
+            f'<div class="mobile-voice-guide"><strong>음성 질문</strong><span>{mobile_voice_hint}</span></div>',
+            unsafe_allow_html=True,
+        )
         mobile_recording = st.audio_input(
             "음성으로 바로 질문",
             key="mobile_voice_recording",
             help="마이크를 누르고 질문하세요. 녹음을 마치면 질문 전송과 답변 음성 재생이 자동으로 이어집니다.",
             disabled=voice_service is None,
             label_visibility="collapsed",
-            width=220,
+            width="stretch",
         )
         mobile_digest = hashlib.sha256(mobile_recording.getvalue()).hexdigest() if mobile_recording else None
         if mobile_recording and mobile_digest != st.session_state.mobile_voice_digest:
@@ -364,9 +373,12 @@ with chat_col:
                 st.session_state.pending_question = mobile_question
                 st.session_state.mobile_voice_reply_pending = True
                 st.toast(f"음성 질문: {mobile_question}", icon="🎙️")
+                st.rerun()
             except ValueError as exc:
+                st.session_state.mobile_voice_reply_pending = False
                 st.toast(str(exc), icon="⚠️")
             except Exception:
+                st.session_state.mobile_voice_reply_pending = False
                 st.toast("음성 인식에 실패했습니다. API 연결·사용 한도를 확인해 주세요.", icon="⚠️")
     with st.container(border=True, key="voice_panel"):
         st.markdown("##### 음성으로 질문하기")
