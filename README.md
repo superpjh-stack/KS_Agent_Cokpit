@@ -1,3 +1,11 @@
+# 광성정밀 제조 AI Agent · V2 업데이트
+
+`new-agent-maker` 스킬 기준의 **React·TypeScript·FastAPI V2**를 추가했습니다. 지식베이스/데이터허브 · 대화/작업지시/음성 · 질의이력/추천질문의 3단 화면으로 기존 제조 데이터를 조회합니다.
+
+- 실행 화면: http://127.0.0.1:8514
+- [V2 실행 방법·설정·검증 결과](v2/README.md)
+- 기존 Streamlit V1과 DB는 유지합니다. 아래는 V1 사용 설명입니다.
+
 # 광성정밀 제조 AI Agent Cockpit · V1
 
 경동글로벌텍 제조 AI Cockpit을 기준 구현으로 삼아 `agent-cokpit-maker`·`skill-1-streamlit` 스킬을 광성정밀의 제조 공정에 적용한 **Streamlit 앱**입니다.

@@ -1,0 +1,21 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: v2/Dockerfile
+    image: kwangsung-cockpit-v2:local
+    ports:
+      - "127.0.0.1:8514:8514"
+    environment:
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5.6}
+      OPENAI_REALTIME_MODEL: ${OPENAI_REALTIME_MODEL:-gpt-realtime-2.1}
+      OPENAI_REALTIME_VOICE: ${OPENAI_REALTIME_VOICE:-marin}
+      COCKPIT_ACCESS_TOKEN: ${COCKPIT_ACCESS_TOKEN:-}
+      DATABASE_URL: ${DATABASE_URL:-}
+      SQLITE_PATH: /app/data/kwangsung_demo.db
+    volumes:
+      - kwangsung-v2-data:/app/data
+    restart: unless-stopped
+volumes:
+  kwangsung-v2-data:

@@ -11,3 +11,5 @@ node_modules/
 v2/web/dist/
 *.tsbuildinfo
 data/kwangsung_v2_demo.db
+v2/web/test-results/
+v2/web/playwright-report/
